@@ -23,24 +23,32 @@ App = {
         App.webProvider = new Web3(new Web3.providers.HttpProvider('http://localhost:8545'));
       }
       
-      return App.initContract();
+      try {
+        await App.initContract();
+      } catch (error) {
+        console.error("Error initializing contract:", error);
+      }
   },
    
    
   initContract: function() {
-    return $.getJSON("SimpleStorage.json")
-      .then(function(SimpleStorageContract) {
-        // instantiate a new truffle contract from the artifact
-        App.contracts.SimpleStorage = TruffleContract(SimpleStorageContract);
-        
-        // connect provider to interact with contract
-        App.contracts.SimpleStorage.setProvider(App.webProvider);
+    return new Promise((resolve, reject) => {
+      $.getJSON("SimpleStorage.json", function(SimpleStorageContract) {
+        try {
+          // instantiate a new truffle contract from the artifact
+          App.contracts.SimpleStorage = TruffleContract(SimpleStorageContract);
+          
+          // connect provider to interact with contract
+          App.contracts.SimpleStorage.setProvider(App.webProvider);
 
-        return App.render();
-      })
-      .catch(function(error) {
-        console.error("Error loading contract:", error);
+          resolve(App.render());
+        } catch (error) {
+          reject(error);
+        }
+      }).fail(function(error) {
+        reject(error);
       });
+    });
   },
    
   render: async function(){
