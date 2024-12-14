@@ -5,19 +5,24 @@ App = {
     account: '0x0',
    
    
-  initWeb:function() {
+  initWeb: async function() {
       // if an ethereum provider instance is already provided by metamask
       const provider = window.ethereum
-      if( provider ){
+      if(provider) {
         App.webProvider = provider;
+        try {
+          // Request account access
+          await window.ethereum.request({ method: 'eth_requestAccounts' });
+        } catch (error) {
+          console.error("User denied account access");
+        }
       }
-      else{
+      else {
         $("#loader-msg").html('No metamask ethereum provider found')
-  
         // specify default instance if no web3 instance provided
         App.webProvider = new Web3(new Web3.providers.HttpProvider('http://localhost:8545'));
       }
-    
+      
       return App.initContract();
   },
    
