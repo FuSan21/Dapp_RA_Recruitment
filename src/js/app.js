@@ -78,14 +78,15 @@ App = {
     alert("Data Stored successfully!")
   },
   retrieve: async function(){
-    const contractInstance = await App.contracts.SimpleStorage.deployed()
-    
-    const receivedData = await contractInstance.retrieve();
-    const formattedData = receivedData
-
-    const storedData = $("#stored-data");
-    storedData.empty();
-    storedData.append( formattedData );
+    try {
+      const contractInstance = await App.contracts.SimpleStorage.deployed()
+      const receivedData = await contractInstance.retrieve();
+      // Convert BigNumber to string and update the UI
+      $("#stored-data").html(receivedData.toString());
+    } catch (error) {
+      console.error("Error retrieving data:", error);
+      $("#stored-data").html("Error retrieving data");
+    }
   }
 };
    
