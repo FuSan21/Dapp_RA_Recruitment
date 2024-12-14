@@ -28,15 +28,19 @@ App = {
    
    
   initContract: function() {
-      $.getJSON("SimpleStorage.json", function( SimpleStorageContract ){
-        // instantiate a new truffle contract from the artifict
-        App.contracts.SimpleStorage = TruffleContract( SimpleStorageContract );
-    
+    return $.getJSON("SimpleStorage.json")
+      .then(function(SimpleStorageContract) {
+        // instantiate a new truffle contract from the artifact
+        App.contracts.SimpleStorage = TruffleContract(SimpleStorageContract);
+        
         // connect provider to interact with contract
-        App.contracts.SimpleStorage.setProvider( App.webProvider );
-  
+        App.contracts.SimpleStorage.setProvider(App.webProvider);
+
         return App.render();
       })
+      .catch(function(error) {
+        console.error("Error loading contract:", error);
+      });
   },
    
   render: async function(){
